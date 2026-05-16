@@ -1,0 +1,181 @@
+.battleships-puzzle {
+    max-width: 1040px;
+}
+
+.battleships-puzzle-layout {
+    display: grid;
+    grid-template-columns: minmax(440px, 680px) minmax(180px, 240px);
+    align-items: start;
+    gap: 24px;
+}
+
+.battleships-puzzle-board {
+    --board-size: 10;
+    display: grid;
+    grid-template-columns: repeat(var(--board-size), minmax(34px, 1fr)) 32px;
+    width: min(100%, 680px);
+}
+
+.battle-empty-corner,
+.battle-axis,
+.battle-count {
+    display: grid;
+    place-items: center;
+    min-height: 32px;
+    color: #617083;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.battle-count {
+    color: #253242;
+    background: #dfe9f1;
+}
+
+.battle-count.complete {
+    color: #ffffff;
+    background: #177f8f;
+}
+
+.battle-puzzle-cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    min-width: 0;
+    color: #253242;
+    background: #ffffff;
+    border: 1px solid #bfd0dc;
+    border-radius: 6px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.battle-puzzle-cell:hover {
+    background: #e6f2f5;
+    border-color: #177f8f;
+}
+
+.battle-puzzle-cell.water {
+    color: #287ca8;
+    background: #eaf6fb;
+    border-color: #a9cddd;
+}
+
+.battle-puzzle-cell.ship_single,
+.battle-puzzle-cell.ship_middle,
+.battle-puzzle-cell.ship_left,
+.battle-puzzle-cell.ship_right,
+.battle-puzzle-cell.ship_up,
+.battle-puzzle-cell.ship_down {
+    background: #fff7f2;
+    border-color: #e7b79c;
+}
+
+.battle-puzzle-cell.linked-hover {
+    border-color: #253242;
+    box-shadow: inset 0 0 0 1px #253242;
+    z-index: 1;
+}
+
+.battle-water-icon {
+    width: 58%;
+    height: 58%;
+}
+
+.battle-ship-icon {
+    display: block;
+    width: 58%;
+    height: 58%;
+    background: #253242;
+}
+
+.battle-ship-icon.single {
+    border-radius: 999px;
+}
+
+.battle-ship-icon.middle {
+    border-radius: 4px;
+}
+
+.battle-ship-icon.up {
+    border-radius: 4px 4px 999px 999px;
+}
+
+.battle-ship-icon.right {
+    border-radius: 999px 4px 4px 999px;
+}
+
+.battle-ship-icon.down {
+    border-radius: 999px 999px 4px 4px;
+}
+
+.battle-ship-icon.left {
+    border-radius: 4px 999px 999px 4px;
+}
+
+.ship-link-button {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    color: #ffffff;
+    background: #253242;
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(25, 32, 42, .22);
+    font-size: 10px;
+    z-index: 3;
+}
+
+.ship-link-button:hover {
+    background: #177f8f;
+}
+
+.battle-puzzle-cell.fixed {
+    cursor: default;
+    background: #edf2f6;
+    border-color: #7c8b9a;
+}
+
+.battle-puzzle-cell.fixed:hover {
+    background: #edf2f6;
+    border-color: #7c8b9a;
+}
+
+.battle-puzzle-panel {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #d8e0e7;
+    border-radius: 8px;
+}
+
+.battle-fleet-list {
+    display: grid;
+    gap: 8px;
+}
+
+.battle-fleet-item {
+    padding: 8px 10px;
+    color: #31465a;
+    background: #eef4f8;
+    border-radius: 6px;
+    font-weight: 800;
+}
+
+.battleships-puzzle .primary-action:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+}
+
+@media (max-width: 960px) {
+    .battleships-puzzle-layout {
+        grid-template-columns: 1fr;
+    }
+}

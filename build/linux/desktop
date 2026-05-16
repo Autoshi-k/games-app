@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=My Product
+Comment=A games-app application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/games-app %u
+Terminal=false
+Type=Application
+Icon=games-app
+Categories=Utility;
+StartupWMClass=games-app
+
+ 
