@@ -161,12 +161,19 @@
     gap: 8px;
 }
 
-.battle-fleet-item {
-    padding: 8px 10px;
-    color: #31465a;
+.battle-fleet-ship {
+    display: flex;
+    width: fit-content;
+    padding: 6px;
     background: #eef4f8;
     border-radius: 6px;
-    font-weight: 800;
+}
+
+.battle-fleet-part {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
 }
 
 .battleships-puzzle .primary-action:disabled {
