@@ -44,21 +44,32 @@ struct GameSession: Identifiable {
 
 enum GameState {
     case battleships(BattleshipsPuzzle)
+    case wordle(WordlePuzzle)
+    case memory(MemoryPuzzle)
 }
 
 enum PrivateGameState {
     case battleships(BattleshipsSolution)
+    case wordle(WordleSolution)
+    case memory(MemorySolution)
 }
 
 enum GameAnswer {
     case battleships(shipCoordinates: [String])
+    case wordle(guess: String)
+    case memory(firstIndex: Int, secondIndex: Int)
 }
 
-struct GameResult {
+struct GameResult: Equatable {
+    let id = UUID()
     let correct: Bool
     let message: String
     let score: Int
     let expected: [String]?
+
+    static func == (lhs: GameResult, rhs: GameResult) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct HintResult {

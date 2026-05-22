@@ -4,7 +4,9 @@ import SwiftUI
 struct SwiftGamesApp: App {
     @StateObject private var model = AppViewModel(
         catalog: GameCatalog(games: [
-            BattleshipsGame()
+            BattleshipsGame(),
+            WordleGame(),
+            MemoryGame()
         ])
     )
 

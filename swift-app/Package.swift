@@ -5,14 +5,17 @@ import PackageDescription
 let package = Package(
     name: "SwiftGamesApp",
     platforms: [
-        .macOS(.v13)
+        .iOS(.v16)
     ],
     products: [
         .executable(name: "SwiftGamesApp", targets: ["GamesApp"])
     ],
     targets: [
         .executableTarget(
-            name: "GamesApp"
+            name: "GamesApp",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )

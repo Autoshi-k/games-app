@@ -40,11 +40,9 @@ struct BattleshipsView: View {
                     .fontWeight(.semibold)
             }
 
-            ScrollView(.horizontal) {
-                HStack(alignment: .top, spacing: 24) {
-                    BattleshipsBoardView(board: board)
-                    BattleshipsFleetView(fleet: puzzle.fleet)
-                }
+            VStack(alignment: .leading, spacing: 16) {
+                BattleshipsBoardView(board: board)
+                BattleshipsFleetView(fleet: puzzle.fleet)
             }
 
             HStack(spacing: 12) {
@@ -67,48 +65,69 @@ struct BattleshipsBoardView: View {
     @ObservedObject var board: BattleshipsBoardViewModel
 
     var body: some View {
-        Grid(horizontalSpacing: 3, verticalSpacing: 3) {
-            GridRow {
-                ForEach(0..<board.puzzle.boardSize, id: \.self) { col in
-                    CountCell(
-                        value: board.puzzle.columnCounts[col],
-                        isComplete: board.countShipsInColumn(col) == board.puzzle.columnCounts[col]
-                    )
-                }
-                Color.clear.frame(width: 30, height: 30)
-            }
+        GeometryReader { geometry in
+            let cellSize = boardCellSize(in: geometry.size)
 
-            ForEach(0..<board.puzzle.boardSize, id: \.self) { row in
+            Grid(horizontalSpacing: 3, verticalSpacing: 3) {
                 GridRow {
                     ForEach(0..<board.puzzle.boardSize, id: \.self) { col in
-                        let coordinate = board.coordinate(row: row, col: col)
-                        BattleCell(
-                            coordinate: coordinate,
-                            mark: board.mark(at: coordinate),
-                            isFixed: board.isFixed(coordinate),
-                            isHoveredComponent: board.hoveredCoordinates.contains(coordinate),
-                            showsLinkButton: board.linkButtonCoordinate == coordinate && !board.editableHoveredComponent.isEmpty,
-                            isLinked: board.hoveredComponentIsLinked,
-                            onCycle: { board.cycleCell(coordinate) },
-                            onHover: { board.setHoveredShipIfNeeded(coordinate) },
-                            onToggleLink: { board.toggleLinkedShip() }
+                        CountCell(
+                            value: board.puzzle.columnCounts[col],
+                            isComplete: board.countShipsInColumn(col) == board.puzzle.columnCounts[col],
+                            size: cellSize
                         )
                     }
+                    Color.clear.frame(width: cellSize, height: cellSize)
+                }
 
-                    CountCell(
-                        value: board.puzzle.rowCounts[row],
-                        isComplete: board.countShipsInRow(row) == board.puzzle.rowCounts[row]
-                    )
+                ForEach(0..<board.puzzle.boardSize, id: \.self) { row in
+                    GridRow {
+                        ForEach(0..<board.puzzle.boardSize, id: \.self) { col in
+                            let coordinate = board.coordinate(row: row, col: col)
+                            BattleCell(
+                                coordinate: coordinate,
+                                mark: board.mark(at: coordinate),
+                                isFixed: board.isFixed(coordinate),
+                                isHoveredComponent: board.hoveredCoordinates.contains(coordinate),
+                                showsLinkButton: board.linkButtonCoordinate == coordinate && !board.editableHoveredComponent.isEmpty,
+                                isLinked: board.hoveredComponentIsLinked,
+                                onCycle: { board.cycleCell(coordinate) },
+                                onHover: { board.setHoveredShipIfNeeded(coordinate) },
+                                onToggleLink: { board.toggleLinkedShip() },
+                                size: cellSize
+                            )
+                        }
+
+                        CountCell(
+                            value: board.puzzle.rowCounts[row],
+                            isComplete: board.countShipsInRow(row) == board.puzzle.rowCounts[row],
+                            size: cellSize
+                        )
+                    }
                 }
             }
-        }
-        #if os(macOS)
-        .onHover { isHovering in
-            if !isHovering {
-                board.clearHoveredShip()
+            .frame(width: boardDimension(in: geometry.size), height: boardDimension(in: geometry.size), alignment: .topLeading)
+            #if os(macOS)
+            .onHover { isHovering in
+                if !isHovering {
+                    board.clearHoveredShip()
+                }
             }
+            #endif
         }
-        #endif
+        .frame(maxWidth: 492)
+        .aspectRatio(1, contentMode: .fit)
+    }
+
+    private func boardCellSize(in size: CGSize) -> CGFloat {
+        let spacing: CGFloat = 3
+        let columns = CGFloat(board.puzzle.boardSize + 1)
+        let gaps = CGFloat(board.puzzle.boardSize) * spacing
+        return min(42, max(24, (boardDimension(in: size) - gaps) / columns))
+    }
+
+    private func boardDimension(in size: CGSize) -> CGFloat {
+        min(size.width, size.height)
     }
 }
 
@@ -122,9 +141,10 @@ struct BattleCell: View {
     let onCycle: () -> Void
     let onHover: () -> Void
     let onToggleLink: () -> Void
+    let size: CGFloat
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
+        ZStack(alignment: .center) {
             RoundedRectangle(cornerRadius: 6)
                 .fill(backgroundColor)
                 .overlay(
@@ -134,26 +154,26 @@ struct BattleCell: View {
 
             if mark == .water {
                 Image(systemName: "drop.fill")
-                    .font(.system(size: 17))
+                    .font(.system(size: max(10, size * 0.38)))
                     .foregroundStyle(.blue)
             } else if let mark, mark.isShip {
                 ShipPartView(shape: mark.shipPartShape)
-                    .frame(width: 24, height: 24)
+                    .frame(width: max(12, size * 0.52), height: max(12, size * 0.52))
             }
 
             if showsLinkButton {
                 Button(action: onToggleLink) {
-                    Image(systemName: isLinked ? "link.badge.minus" : "link")
-                        .font(.system(size: 10, weight: .bold))
+                    Image(systemName: "link")
+                        .font(.system(size: max(8, size * 0.24), weight: .bold))
                         .foregroundStyle(.white)
-                        .frame(width: 22, height: 22)
+                        .frame(width: max(16, size * 0.52), height: max(16, size * 0.52), alignment: .bottomTrailing)
                         .background(Circle().fill(Color.primary))
                 }
                 .buttonStyle(.plain)
-                .offset(x: 8, y: 8)
+                .offset(x: size * 0.18, y: size * 0.18)
             }
         }
-        .frame(width: 42, height: 42)
+        .frame(width: size, height: size)
         .contentShape(Rectangle())
         .onTapGesture {
             if !isFixed {
@@ -189,13 +209,14 @@ struct BattleCell: View {
 struct CountCell: View {
     let value: Int
     let isComplete: Bool
+    let size: CGFloat
 
     var body: some View {
         Text("\(value)")
-            .font(.caption)
+            .font(.system(size: max(11, size * 0.36), weight: .bold))
             .fontWeight(.bold)
             .foregroundStyle(isComplete ? .white : .primary)
-            .frame(width: 30, height: 30)
+            .frame(width: size, height: size)
             .background(isComplete ? Color.teal : Color.gray.opacity(0.18))
             .clipShape(RoundedRectangle(cornerRadius: 5))
     }
@@ -205,29 +226,33 @@ struct BattleshipsFleetView: View {
     let fleet: [FleetItem]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Fleet")
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
 
-            ForEach(fleet) { item in
-                ForEach(0..<item.count, id: \.self) { index in
-                    HStack(spacing: 0) {
-                        ForEach(Array(fleetShapes(size: item.size).enumerated()), id: \.offset) { _, shape in
-                            ShipPartView(shape: shape)
-                                .frame(width: 28, height: 28)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 84), spacing: 8)], alignment: .leading, spacing: 8) {
+                ForEach(fleet) { item in
+                    ForEach(0..<item.count, id: \.self) { index in
+                        HStack(spacing: 0) {
+                            ForEach(Array(fleetShapes(size: item.size).enumerated()), id: \.offset) { _, shape in
+                                ShipPartView(shape: shape)
+                                    .frame(width: 16, height: 16)
+                            }
                         }
+                        .frame(height: 22)
+                        .padding(.horizontal, 6)
+                        .background(Color.gray.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .id("\(item.size)-\(index)")
                     }
-                    .padding(8)
-                    .background(Color.gray.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .id("\(item.size)-\(index)")
                 }
             }
         }
-        .padding(16)
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.25)))
