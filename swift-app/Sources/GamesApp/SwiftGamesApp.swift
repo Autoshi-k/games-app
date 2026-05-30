@@ -7,7 +7,8 @@ struct SwiftGamesApp: App {
             BattleshipsGame(),
             WordleGame(),
             MemoryGame()
-        ])
+        ]),
+        scoreStore: ScoreRepository()
     )
 
     var body: some Scene {

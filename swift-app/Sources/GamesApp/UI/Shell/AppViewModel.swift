@@ -4,6 +4,8 @@ import Combine
 @MainActor
 final class AppViewModel: ObservableObject {
     let catalog: GameCatalog
+    let scoreStore: ScoreRepository
+    private let wordleProgress: WordleProgressRepository
     let games: [GameMetadata]
 
     @Published var selectedGameID: String
@@ -14,13 +16,16 @@ final class AppViewModel: ObservableObject {
     @Published var errorText = ""
     @Published var isShowingGame = false
     @Published var currentGameName = ""
+    @Published private(set) var todaysWordleProgress: WordleDayProgress?
 
     var selectedGame: GameMetadata? {
         games.first { $0.id == selectedGameID }
     }
 
-    init(catalog: GameCatalog) {
+    init(catalog: GameCatalog, scoreStore: ScoreRepository) {
         self.catalog = catalog
+        self.scoreStore = scoreStore
+        self.wordleProgress = WordleProgressRepository()
         self.games = catalog.metadata
         self.selectedGameID = games.first?.id ?? ""
         self.config = games.first?.defaults ?? [:]
@@ -35,6 +40,11 @@ final class AppViewModel: ObservableObject {
         hintText = ""
         errorText = ""
         createGame()
+        if id == "wordle", let session, case let .wordle(puzzle) = session.state {
+            todaysWordleProgress = wordleProgress.load(forDate: puzzle.dateKey)
+        } else {
+            todaysWordleProgress = nil
+        }
         if session != nil {
             isShowingGame = true
         }
@@ -57,10 +67,11 @@ final class AppViewModel: ObservableObject {
         errorText = ""
         do {
             result = try catalog.checkResult(session: session, answer: answer)
+            if result?.correct == true, case .battleships = answer {
+                recordGameWin(moves: nil)
+            }
         } catch {
             let message = String(describing: error)
-            // Defer the error assignment so it arrives as a distinct @Published change,
-            // allowing repeated invalid guesses to each trigger onChange in the view.
             Task { self.errorText = message }
         }
     }
@@ -74,5 +85,29 @@ final class AppViewModel: ObservableObject {
         } catch {
             errorText = String(describing: error)
         }
+    }
+
+    func saveWordleProgress(_ progress: WordleDayProgress) {
+        wordleProgress.save(progress)
+        todaysWordleProgress = progress
+    }
+
+    func recordGameWin(moves: Int?) {
+        guard let session else { return }
+        scoreStore.record(GameScore(
+            gameID: session.gameID,
+            gameName: currentGameName,
+            difficulty: currentDifficulty(),
+            completedAt: Date(),
+            moves: moves
+        ))
+    }
+
+    // MARK: - Private
+
+    private func currentDifficulty() -> String {
+        if let d = config["difficulty"] { return d.capitalized }
+        if let size = config["size"] { return size == "6x6" ? "Hard" : "Normal" }
+        return "Normal"
     }
 }

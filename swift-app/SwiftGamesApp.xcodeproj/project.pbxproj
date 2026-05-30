@@ -24,6 +24,11 @@
 		01000000000000000000000F /* Sources/GamesApp/Resources/wordle-answers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* Sources/GamesApp/Resources/wordle-answers.txt */; };
 		010000000000000000000010 /* Sources/GamesApp/Resources/wordle-valid.txt in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000011 /* Sources/GamesApp/Resources/wordle-valid.txt */; };
 		010000000000000000000015 /* Sources/GamesApp/Resources/words.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* Sources/GamesApp/Resources/words.json */; };
+		010000000000000000000016 /* Sources/GamesApp/Application/ScoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* Sources/GamesApp/Application/ScoreStore.swift */; };
+		010000000000000000000017 /* Sources/GamesApp/Application/ScoreRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* Sources/GamesApp/Application/ScoreRepository.swift */; };
+		010000000000000000000018 /* Sources/GamesApp/UI/Stats/StatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* Sources/GamesApp/UI/Stats/StatsViewModel.swift */; };
+		010000000000000000000019 /* Sources/GamesApp/UI/Stats/StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* Sources/GamesApp/UI/Stats/StatsView.swift */; };
+		01000000000000000000001A /* Sources/GamesApp/Application/WordleProgressRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* Sources/GamesApp/Application/WordleProgressRepository.swift */; };
 		010000000000000000000011 /* Sources/GamesApp/Games/Memory/MemoryTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000012 /* Sources/GamesApp/Games/Memory/MemoryTypes.swift */; };
 		010000000000000000000012 /* Sources/GamesApp/Games/Memory/MemoryGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000013 /* Sources/GamesApp/Games/Memory/MemoryGame.swift */; };
 		010000000000000000000013 /* Sources/GamesApp/UI/Memory/MemoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000014 /* Sources/GamesApp/UI/Memory/MemoryViewModel.swift */; };
@@ -53,6 +58,11 @@
 		020000000000000000000014 /* Sources/GamesApp/UI/Memory/MemoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/UI/Memory/MemoryViewModel.swift; sourceTree = "<group>"; };
 		020000000000000000000015 /* Sources/GamesApp/UI/Memory/MemoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/UI/Memory/MemoryView.swift; sourceTree = "<group>"; };
 		020000000000000000000016 /* Sources/GamesApp/Resources/words.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Sources/GamesApp/Resources/words.json"; sourceTree = "<group>"; };
+		020000000000000000000017 /* Sources/GamesApp/Application/ScoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/Application/ScoreStore.swift; sourceTree = "<group>"; };
+		020000000000000000000018 /* Sources/GamesApp/Application/ScoreRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/Application/ScoreRepository.swift; sourceTree = "<group>"; };
+		020000000000000000000019 /* Sources/GamesApp/UI/Stats/StatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/UI/Stats/StatsViewModel.swift; sourceTree = "<group>"; };
+		02000000000000000000001A /* Sources/GamesApp/UI/Stats/StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/UI/Stats/StatsView.swift; sourceTree = "<group>"; };
+		02000000000000000000001B /* Sources/GamesApp/Application/WordleProgressRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/GamesApp/Application/WordleProgressRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +108,11 @@
 				020000000000000000000014 /* Sources/GamesApp/UI/Memory/MemoryViewModel.swift */,
 				020000000000000000000015 /* Sources/GamesApp/UI/Memory/MemoryView.swift */,
 				020000000000000000000016 /* Sources/GamesApp/Resources/words.json */,
+				020000000000000000000017 /* Sources/GamesApp/Application/ScoreStore.swift */,
+				020000000000000000000018 /* Sources/GamesApp/Application/ScoreRepository.swift */,
+				020000000000000000000019 /* Sources/GamesApp/UI/Stats/StatsViewModel.swift */,
+				02000000000000000000001A /* Sources/GamesApp/UI/Stats/StatsView.swift */,
+				02000000000000000000001B /* Sources/GamesApp/Application/WordleProgressRepository.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -199,6 +214,11 @@
 				010000000000000000000012 /* Sources/GamesApp/Games/Memory/MemoryGame.swift in Sources */,
 				010000000000000000000013 /* Sources/GamesApp/UI/Memory/MemoryViewModel.swift in Sources */,
 				010000000000000000000014 /* Sources/GamesApp/UI/Memory/MemoryView.swift in Sources */,
+				010000000000000000000016 /* Sources/GamesApp/Application/ScoreStore.swift in Sources */,
+				010000000000000000000017 /* Sources/GamesApp/Application/ScoreRepository.swift in Sources */,
+				010000000000000000000018 /* Sources/GamesApp/UI/Stats/StatsViewModel.swift in Sources */,
+				010000000000000000000019 /* Sources/GamesApp/UI/Stats/StatsView.swift in Sources */,
+				01000000000000000000001A /* Sources/GamesApp/Application/WordleProgressRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

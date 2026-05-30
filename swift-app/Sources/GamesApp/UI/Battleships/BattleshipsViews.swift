@@ -29,16 +29,11 @@ struct BattleshipsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(session.title)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
-                Text(session.prompt)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-            }
+            Text(session.title)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
 
             VStack(alignment: .leading, spacing: 16) {
                 BattleshipsBoardView(board: board)
@@ -263,19 +258,41 @@ struct ShipPartView: View {
     let shape: ShipPartShape
 
     var body: some View {
-        RoundedRectangle(cornerRadius: radius)
+        ShipCellShape(partShape: shape)
             .fill(Color.primary)
     }
+}
 
-    private var radius: CGFloat {
-        switch shape {
-        case .single:
-            return 999
-        case .middle:
-            return 4
-        case .up, .right, .down, .left:
-            return 10
+struct ShipCellShape: Shape {
+    let partShape: ShipPartShape
+
+    func path(in rect: CGRect) -> Path {
+        let r: CGFloat = 999
+        switch partShape {
+        case .single:  return roundedPath(in: rect, tl: r, tr: r, bl: r, br: r)
+        case .middle:  return roundedPath(in: rect, tl: 0, tr: 0, bl: 0, br: 0)
+        case .down:    return roundedPath(in: rect, tl: r, tr: r, bl: 0, br: 0)
+        case .up:      return roundedPath(in: rect, tl: 0, tr: 0, bl: r, br: r)
+        case .right:   return roundedPath(in: rect, tl: r, tr: 0, bl: r, br: 0)
+        case .left:    return roundedPath(in: rect, tl: 0, tr: r, bl: 0, br: r)
         }
+    }
+
+    private func roundedPath(in rect: CGRect, tl: CGFloat, tr: CGFloat, bl: CGFloat, br: CGFloat) -> Path {
+        let m = min(rect.width, rect.height) / 2
+        let tl = min(tl, m), tr = min(tr, m), bl = min(bl, m), br = min(br, m)
+        var p = Path()
+        p.move(to: CGPoint(x: rect.minX + tl, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX - tr, y: rect.minY))
+        if tr > 0 { p.addRelativeArc(center: CGPoint(x: rect.maxX - tr, y: rect.minY + tr), radius: tr, startAngle: .degrees(-90), delta: .degrees(90)) }
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - br))
+        if br > 0 { p.addRelativeArc(center: CGPoint(x: rect.maxX - br, y: rect.maxY - br), radius: br, startAngle: .degrees(0), delta: .degrees(90)) }
+        p.addLine(to: CGPoint(x: rect.minX + bl, y: rect.maxY))
+        if bl > 0 { p.addRelativeArc(center: CGPoint(x: rect.minX + bl, y: rect.maxY - bl), radius: bl, startAngle: .degrees(90), delta: .degrees(90)) }
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.minY + tl))
+        if tl > 0 { p.addRelativeArc(center: CGPoint(x: rect.minX + tl, y: rect.minY + tl), radius: tl, startAngle: .degrees(180), delta: .degrees(90)) }
+        p.closeSubpath()
+        return p
     }
 }
 

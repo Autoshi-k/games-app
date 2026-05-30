@@ -14,10 +14,21 @@ final class WordleViewModel: ObservableObject {
 
     private let maxGuesses: Int
     private let wordLength: Int
+    private let dateKey: String
+    var onStateChanged: ((WordleDayProgress) -> Void)?
 
-    init(puzzle: WordlePuzzle) {
+    init(puzzle: WordlePuzzle, savedProgress: WordleDayProgress? = nil) {
         self.maxGuesses = puzzle.maxGuesses
         self.wordLength = puzzle.wordLength
+        self.dateKey = puzzle.dateKey
+
+        if let progress = savedProgress {
+            guessHistory = progress.guesses.map { GuessRow(word: $0.word, feedback: $0.feedback) }
+            won = progress.won
+            gameOver = progress.gameOver
+            targetWord = progress.revealedWord
+            for row in guessHistory { updateKeyboard(row) }
+        }
     }
 
     var canSubmit: Bool {
@@ -59,6 +70,8 @@ final class WordleViewModel: ObservableObject {
             targetWord = result.expected?.first
             gameOver = true
         }
+
+        notifyStateChanged()
     }
 
     func showToast(_ message: String) {
@@ -74,6 +87,16 @@ final class WordleViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func notifyStateChanged() {
+        onStateChanged?(WordleDayProgress(
+            dateKey: dateKey,
+            guesses: guessHistory.map { WordleGuess(word: $0.word, feedback: $0.feedback) },
+            won: won,
+            gameOver: gameOver,
+            revealedWord: targetWord
+        ))
+    }
 
     private func parseFeedback(_ message: String) -> [LetterState] {
         message.map { char in

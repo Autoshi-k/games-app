@@ -1,6 +1,6 @@
 import Foundation
 
-enum LetterState: Equatable {
+enum LetterState: String, Equatable, Codable {
     case correct
     case present
     case absent
@@ -15,7 +15,8 @@ struct GuessRow: Identifiable {
 struct WordlePuzzle {
     let wordLength: Int
     let maxGuesses: Int
-    let date: String
+    let date: String       // display string, e.g. "May 22, 2026"
+    let dateKey: String    // ISO key "yyyy-MM-dd" used for progress storage
 }
 
 struct WordleSolution {

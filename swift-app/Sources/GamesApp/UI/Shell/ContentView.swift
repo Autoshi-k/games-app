@@ -91,17 +91,29 @@ let allGameEntries: [GameEntry] = [
 struct CatalogScreen: View {
     @ObservedObject var model: AppViewModel
     @State private var selectedDifficulties: [UUID: Int] = [:]
+    @State private var showStats = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Games")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    Text("Tap a game to start playing")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Games")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                        Text("Tap a game to start playing")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button { showStats = true } label: {
+                        Image(systemName: "trophy.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.orange)
+                            .padding(10)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(Circle())
+                    }
                 }
                 .padding(.top, 8)
 
@@ -126,6 +138,9 @@ struct CatalogScreen: View {
         }
         .navigationBarHidden(true)
         .background(Color(.systemGroupedBackground))
+        .sheet(isPresented: $showStats) {
+            StatsView(store: model.scoreStore)
+        }
     }
 }
 
@@ -255,7 +270,10 @@ struct GameSessionScreen: View {
                         puzzle: puzzle,
                         result: model.result,
                         errorText: model.errorText,
-                        onCheck: model.check
+                        onCheck: model.check,
+                        onGameWon: { guesses in model.recordGameWin(moves: guesses) },
+                        savedProgress: model.todaysWordleProgress,
+                        onStateChanged: model.saveWordleProgress
                     )
                     .id(session.id)
                 } else if case let .memory(puzzle) = session.state {
@@ -264,7 +282,8 @@ struct GameSessionScreen: View {
                         puzzle: puzzle,
                         result: model.result,
                         onCheck: model.check,
-                        onPlayAgain: model.createGame
+                        onPlayAgain: model.createGame,
+                        onGameWon: { moves in model.recordGameWin(moves: moves) }
                     )
                     .id(session.id)
                 } else {

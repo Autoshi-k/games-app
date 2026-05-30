@@ -17,11 +17,17 @@ struct WordleGame: Game {
     func createGame(config: [String: String]) throws -> GameSession {
         let word = try todaysWord()
 
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        let dateString = formatter.string(from: Date())
+        let today = Calendar.current.startOfDay(for: Date())
 
-        let puzzle = WordlePuzzle(wordLength: 5, maxGuesses: 6, date: dateString)
+        let display = DateFormatter()
+        display.dateStyle = .medium
+        let dateString = display.string(from: today)
+
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withFullDate]
+        let dateKey = iso.string(from: today)
+
+        let puzzle = WordlePuzzle(wordLength: 5, maxGuesses: 6, date: dateString, dateKey: dateKey)
         let solution = WordleSolution(word: word)
 
         return GameSession(

@@ -8,6 +8,7 @@ struct MemoryView: View {
     let result: GameResult?
     let onCheck: (GameAnswer) -> Void
     let onPlayAgain: () -> Void
+    let onGameWon: (Int) -> Void
 
     @StateObject private var vm: MemoryViewModel
 
@@ -16,13 +17,15 @@ struct MemoryView: View {
         puzzle: MemoryPuzzle,
         result: GameResult?,
         onCheck: @escaping (GameAnswer) -> Void,
-        onPlayAgain: @escaping () -> Void
+        onPlayAgain: @escaping () -> Void,
+        onGameWon: @escaping (Int) -> Void = { _ in }
     ) {
         self.session = session
         self.puzzle = puzzle
         self.result = result
         self.onCheck = onCheck
         self.onPlayAgain = onPlayAgain
+        self.onGameWon = onGameWon
         _vm = StateObject(wrappedValue: MemoryViewModel(puzzle: puzzle))
     }
 
@@ -62,6 +65,9 @@ struct MemoryView: View {
         }
         .onChange(of: result) { newResult in
             vm.handleResult(newResult)
+        }
+        .onChange(of: vm.isComplete) { isComplete in
+            if isComplete { onGameWon(vm.moves) }
         }
     }
 

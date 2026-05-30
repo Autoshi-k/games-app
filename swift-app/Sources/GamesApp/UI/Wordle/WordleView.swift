@@ -6,6 +6,8 @@ struct WordleView: View {
     let result: GameResult?
     let errorText: String
     let onCheck: (GameAnswer) -> Void
+    let onGameWon: (Int) -> Void
+    let onStateChanged: ((WordleDayProgress) -> Void)?
 
     @StateObject private var vm: WordleViewModel
 
@@ -14,14 +16,21 @@ struct WordleView: View {
         puzzle: WordlePuzzle,
         result: GameResult?,
         errorText: String,
-        onCheck: @escaping (GameAnswer) -> Void
+        onCheck: @escaping (GameAnswer) -> Void,
+        onGameWon: @escaping (Int) -> Void = { _ in },
+        savedProgress: WordleDayProgress? = nil,
+        onStateChanged: ((WordleDayProgress) -> Void)? = nil
     ) {
         self.session = session
         self.puzzle = puzzle
         self.result = result
         self.errorText = errorText
         self.onCheck = onCheck
-        _vm = StateObject(wrappedValue: WordleViewModel(puzzle: puzzle))
+        self.onGameWon = onGameWon
+        self.onStateChanged = onStateChanged
+        let vmInstance = WordleViewModel(puzzle: puzzle, savedProgress: savedProgress)
+        vmInstance.onStateChanged = onStateChanged
+        _vm = StateObject(wrappedValue: vmInstance)
     }
 
     var body: some View {
@@ -66,6 +75,9 @@ struct WordleView: View {
         }
         .onChange(of: result) { newResult in
             vm.handleResult(newResult)
+            if vm.won {
+                onGameWon(vm.guessHistory.count)
+            }
         }
         .onChange(of: errorText) { error in
             if !error.isEmpty {
